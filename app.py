@@ -1,7 +1,10 @@
-from util import get_input
+import datetime
+from util import get_input, Pokemon, PokemonEgg
+from datetime import time, timedelta
 import random
 
-pokemon_eggs = []
+pokemon_eggs: list[PokemonEgg] = []
+pokemon_list: list[Pokemon] = []
 
 logo = """\
 
@@ -35,8 +38,9 @@ menu_main = {  # 1 (explains uses) also 4 (uses number text inputs) also 6 (each
 }
 
 menu_check_eggs = {
-    "1": "Destroy Egg",  # 5 (undo egg existence)
-    "2": "Return",
+    "1": "Check again",
+    "2": "Destroy Egg",  # 5 (undo egg existence)
+    "3": "Return",
 }
 
 menu_help = {  # 7 (different versions of help)
@@ -94,13 +98,25 @@ def run_menu_help():
 
 def run_menu_check_eggs():
     while True:
+        # Check for eggs to hatch
+        for i, egg in enumerate(pokemon_eggs):
+            if egg.is_hatchable():
+                new_pokemon = hatch_egg(egg)
+                pokemon_eggs.pop(i)
+                pokemon_list.append(new_pokemon)
+                print(f"Egg {egg.get_egg_name()} hatched!")
+
+        # Print menu
         print("Eggs:")
         print("=====")
         if len(pokemon_eggs) == 0:
             print("[No Eggs]")
         else:
             for egg in pokemon_eggs:
-                print(f"{egg['name']} ({egg['time_left']} minutes left)")
+                time_left = egg.time_left()
+                print(
+                    f"{egg.get_egg_name()} ({time_left['minutes']} minutes {time_left['seconds']} left)"
+                )
         print("=====")
         print()
 
@@ -108,13 +124,15 @@ def run_menu_check_eggs():
 
         match user_in:
             case "1":
+                pass
+            case "2":
                 if len(pokemon_eggs) > 0:
                     pokemon_eggs.pop(0)
                     print("You monster.")
                 else:
                     print("You have no eggs")
                 break
-            case "2":
+            case "3":
                 break
         print()
 
@@ -133,16 +151,29 @@ def run_menu_exit():
         # Actual Gameplay WOW
 
 
-def get_random_egg():
-    all_colors = ["Red", "Green", "Blue"]
-    random_color = random.choice(all_colors)
-    time_left = random.randrange(3, 5)
+def get_random_egg() -> PokemonEgg:
+    #
+    # API
+    #
+    name = "Tatsugiri"
+    id = 978
+    types = ["dragon", "ice"]
+    # in minutes, equal to egg cycles divided by 4 (15-120)
+    incubation_period = random.randrange(3, 10)
 
-    return {
-        "name": f"{random_color} Egg",
-        "creation": "",
-        "time_left": time_left,
-    }
+    current_time = datetime.datetime.now()
+    hatch_time = current_time + timedelta(seconds=incubation_period)
+
+    return PokemonEgg(name=name, id=id, types=types, hatch_time=hatch_time)
+
+
+def hatch_egg(egg: PokemonEgg) -> Pokemon:
+    is_shiny = False
+    nature = "Hardy"
+
+    return Pokemon(
+        name=egg.name, id=egg.id, shiny=is_shiny, nature=nature, types=egg.types
+    )
 
 
 def main():
