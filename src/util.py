@@ -69,7 +69,6 @@ class PokemonEgg:
 
     def is_hatchable(self) -> bool:
         time_left = self.hatch_time - datetime.now()
-        print(f"TRYING TO HATCH EGG: {time_left.total_seconds()}")
         return time_left.total_seconds() <= 0
 
     def time_left(self) -> dict[str, int]:

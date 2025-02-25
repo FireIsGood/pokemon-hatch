@@ -1,7 +1,5 @@
-import datetime
-from util import get_input, Pokemon, PokemonEgg
-from datetime import time, timedelta
-import random
+from src.util import get_input, Pokemon, PokemonEgg
+from src.random_egg import get_random_egg
 
 pokemon_eggs: list[PokemonEgg] = []
 pokemon_list: list[Pokemon] = []
@@ -115,7 +113,7 @@ def run_menu_check_eggs():
             for egg in pokemon_eggs:
                 time_left = egg.time_left()
                 print(
-                    f"{egg.get_egg_name()} ({time_left['minutes']} minutes {time_left['seconds']} left)"
+                    f"{egg.get_egg_name()} ({time_left['minutes']} minutes {time_left['seconds']} seconds left)"
                 )
         print("=====")
         print()
@@ -149,22 +147,6 @@ def run_menu_exit():
         print()
 
         # Actual Gameplay WOW
-
-
-def get_random_egg() -> PokemonEgg:
-    #
-    # API
-    #
-    name = "Tatsugiri"
-    id = 978
-    types = ["dragon", "ice"]
-    # in minutes, equal to egg cycles divided by 4 (15-120)
-    incubation_period = random.randrange(3, 10)
-
-    current_time = datetime.datetime.now()
-    hatch_time = current_time + timedelta(seconds=incubation_period)
-
-    return PokemonEgg(name=name, id=id, types=types, hatch_time=hatch_time)
 
 
 def hatch_egg(egg: PokemonEgg) -> Pokemon:
