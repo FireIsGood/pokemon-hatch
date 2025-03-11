@@ -102,7 +102,7 @@ def run_menu_check_eggs():
     while True:
         # Check for eggs to hatch
         for i, egg in enumerate(pokemon_eggs):
-            if egg.is_hatchable() or True:
+            if egg.is_hatchable():
                 new_pokemon = hatch_egg(egg)
                 pokemon_eggs.pop(i)
                 pokemon_list.append(new_pokemon)
