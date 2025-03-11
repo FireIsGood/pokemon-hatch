@@ -67,16 +67,17 @@ fg
 ```
 
 Once all microservices are started, you must enter a virtual environment and install dependencies for the main program.
+The `venv.sh` script is provided to automate setting up your virtual environment.
 
 ```bash
-# If you do not have a virtual environment yet
-python3 -m venv venv
+# Set up a virtual environment
+chmod +x
+./venv.sh
 
-# Once you have a virtual environment
+# Enable the environment
 . ./venv/bin/activate
-python3 -m pip install -r requirements.txt
 
-# To exit the virtual environment
+# Disable the environment (after running the app)
 deactivate
 ```
 
