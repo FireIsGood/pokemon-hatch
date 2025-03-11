@@ -1,2 +1,8 @@
 __pycache__
 venv/
+
+# Microservice folders as direct in the README
+microservice-a/
+microservice-b/
+microservice-c/
+microservice-d/
