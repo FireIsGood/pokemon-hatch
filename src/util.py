@@ -90,6 +90,7 @@ class Pokemon:
     id: int
     types: list[str]
     shiny: bool
+    modifiers: list[str]
     nature: str
     individual_values: dict[str, int]
     held_item: dict[str, str]
@@ -98,16 +99,21 @@ class Pokemon:
         shiny_prefix = ""
         if self.shiny:
             shiny_prefix = "shiny "
+
+        modifier_suffix = ""
+        if len(self.modifiers) > 0:
+            modifier_suffix = "\n  " + "\n  ".join(self.modifiers)
+
         item_suffix = ""
         if self.held_item:
-            item_suffix = f"\nItem: {self.held_item["name"]}\n  {'\n  '.join(self.held_item['description'].split('\n'))}"
+            item_suffix = f"\nItem: {self.held_item['name']}\n  {'\n  '.join(self.held_item['description'].split('\n'))}"
 
         iv_kv = []
         for key, value in self.individual_values.items():
             iv_kv.append(f"  {key}: {value}\n")
         individual_values = "".join(iv_kv)
 
-        return f"{shiny_prefix}{self.name} ({', '.join(self.types)}){item_suffix}\nIVs:\n{individual_values}Nature: {self.nature}"
+        return f"{shiny_prefix}{self.name} ({', '.join(self.types)}){modifier_suffix}{item_suffix}\nIVs:\n{individual_values}Nature: {self.nature}"
 
 
 def hatch_egg(egg: PokemonEgg) -> Pokemon:
@@ -115,11 +121,21 @@ def hatch_egg(egg: PokemonEgg) -> Pokemon:
     if not event_data:
         raise Exception("Rare Event API is exploded")
     event_list = event_data["list"]
+    event_list = [
+        {"name": "shiny", "id": 1, "data": ""},
+        {"name": "suspicious", "id": 2, "data": "likes fishing"},
+        {"name": "strange", "id": 3, "data": "epic"},
+    ]
 
     shiny = False
+    modifiers = []
     for event in event_list:
         if event["id"] == 1:
             shiny = True
+        elif event["id"] == 2:
+            modifiers.append(f"{event['name']}: {event['data']}")
+        elif event["id"] == 3:
+            modifiers.append(f"{event['name']}: {event['data']}")
 
     trait_data = get_endpoint(4544, "")
     if not trait_data:
@@ -136,6 +152,7 @@ def hatch_egg(egg: PokemonEgg) -> Pokemon:
         name=egg.name,
         id=egg.id,
         shiny=shiny,
+        modifiers=modifiers,
         nature=nature,
         types=egg.types,
         individual_values=individual_values,
