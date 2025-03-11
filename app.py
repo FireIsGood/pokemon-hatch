@@ -1,4 +1,4 @@
-from src.util import get_input, Pokemon, PokemonEgg
+from src.util import get_input, Pokemon, PokemonEgg, hatch_egg
 from src.random_egg import get_random_egg
 
 pokemon_eggs: list[PokemonEgg] = []
@@ -41,6 +41,10 @@ menu_check_eggs = {
     "3": "Return",
 }
 
+menu_pokemon = {
+    "1": "Return",
+}
+
 menu_help = {
     "1": "FAQ",
     "2": "How to...",
@@ -70,7 +74,7 @@ def run_menu_main():
             case "2":
                 run_menu_check_eggs()
             case "3":
-                print("You have no pokemon")
+                run_menu_check_pokemon()
             case "4":
                 run_menu_help()
             case "5":
@@ -98,11 +102,11 @@ def run_menu_check_eggs():
     while True:
         # Check for eggs to hatch
         for i, egg in enumerate(pokemon_eggs):
-            if egg.is_hatchable():
+            if egg.is_hatchable() or True:
                 new_pokemon = hatch_egg(egg)
                 pokemon_eggs.pop(i)
                 pokemon_list.append(new_pokemon)
-                print(f"Egg {egg.get_egg_name()} hatched!")
+                print(f"{egg.get_egg_name()} hatched!\n")
 
         # Print menu
         print("Eggs:")
@@ -135,6 +139,29 @@ def run_menu_check_eggs():
         print()
 
 
+def run_menu_check_pokemon():
+    while True:
+        # Print menu
+        print("Pokemon:")
+        print("=====")
+        if len(pokemon_list) == 0:
+            print("[No Pokemon]")
+        else:
+            for (i, pokemon) in enumerate(pokemon_list):
+                print(f"{pokemon.display()}")
+                if i < len(pokemon_list) - 1:
+                    print()
+        print("=====")
+        print()
+
+        user_in = get_input(menu_pokemon)
+
+        match user_in:
+            case "1":
+                break
+        print()
+
+
 def run_menu_exit():
     while True:
         user_in = get_input(menu_exit)
@@ -147,15 +174,6 @@ def run_menu_exit():
         print()
 
         # Actual Gameplay WOW
-
-
-def hatch_egg(egg: PokemonEgg) -> Pokemon:
-    is_shiny = False
-    nature = "Hardy"
-
-    return Pokemon(
-        name=egg.name, id=egg.id, shiny=is_shiny, nature=nature, types=egg.types
-    )
 
 
 def main():

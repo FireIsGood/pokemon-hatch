@@ -1,6 +1,7 @@
 from typing import Dict
 from dataclasses import dataclass
 from datetime import datetime
+from src.api import get_endpoint
 import os
 
 
@@ -42,7 +43,7 @@ TYPE_MODIFIER = {
     "water": "blue",
     "electric": "yellow",
     "grass": "green",
-    "ice": "light blue",
+    "ice": "cyan",
     "fighting": "tan",
     "poison": "purple",
     "ground": "light brown",
@@ -87,6 +88,56 @@ class Pokemon:
 
     name: str
     id: int
+    types: list[str]
     shiny: bool
     nature: str
-    types: list[str]
+    individual_values: dict[str, int]
+    held_item: dict[str, str]
+
+    def display(self) -> str:
+        shiny_prefix = ""
+        if self.shiny:
+            shiny_prefix = "shiny "
+        item_suffix = ""
+        if self.held_item:
+            item_suffix = f"\nItem: {self.held_item["name"]}\n  {'\n  '.join(self.held_item['description'].split('\n'))}"
+
+        iv_kv = []
+        for key, value in self.individual_values.items():
+            iv_kv.append(f"  {key}: {value}\n")
+        individual_values = "".join(iv_kv)
+
+        return f"{shiny_prefix}{self.name} ({', '.join(self.types)}){item_suffix}\nIVs:\n{individual_values}Nature: {self.nature}"
+
+
+def hatch_egg(egg: PokemonEgg) -> Pokemon:
+    event_data = get_endpoint(4512, "")
+    if not event_data:
+        raise Exception("Rare Event API is exploded")
+    event_list = event_data["list"]
+
+    shiny = False
+    for event in event_list:
+        if event["id"] == 1:
+            shiny = True
+
+    trait_data = get_endpoint(4544, "")
+    if not trait_data:
+        raise Exception("Trait API is exploded")
+    individual_values = trait_data["stats"]
+    nature = trait_data["nature"]
+
+    held_item_data = get_endpoint(4523, "")
+    if not held_item_data:
+        raise Exception("Held Item API is exploded")
+    held_item = held_item_data
+
+    return Pokemon(
+        name=egg.name,
+        id=egg.id,
+        shiny=shiny,
+        nature=nature,
+        types=egg.types,
+        individual_values=individual_values,
+        held_item=held_item,
+    )
