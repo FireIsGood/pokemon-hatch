@@ -27,21 +27,21 @@ text_how_to = """\
 Choose "Adopt Pokemon Egg" from the main menu by pressing 1
 """
 
-menu_main = {  # 1 (explains uses) also 4 (uses number text inputs) also 6 (each menu has these options)
-    "1": "Adopt Pokemon Egg (3-5 minute hatch time)",  # 2 (cost)
+menu_main = {
+    "1": "Adopt Pokemon Egg (3-5 minute hatch time)",
     "2": "Check Eggs",
     "3": "View Pokemon",
-    "4": "Help",  # 3 (learn more info)
-    "5": "Exit",  # 8 (exit confirmation)
+    "4": "Help",
+    "5": "Exit",
 }
 
 menu_check_eggs = {
     "1": "Check again",
-    "2": "Destroy Egg",  # 5 (undo egg existence)
+    "2": "Destroy Egg",
     "3": "Return",
 }
 
-menu_help = {  # 7 (different versions of help)
+menu_help = {
     "1": "FAQ",
     "2": "How to...",
     "3": "Return",
